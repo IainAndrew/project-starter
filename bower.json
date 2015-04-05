@@ -1,0 +1,11 @@
+{
+  "name": "project-starter",
+  "version": "0.0.0",
+  "devDependencies": {
+    "jquery": "*",
+    "bourbon": "*",
+    "neat": "*",
+    "modernizr": "*"
+  },
+  "appPath": "app"
+}
