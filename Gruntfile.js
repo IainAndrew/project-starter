@@ -15,6 +15,74 @@ module.exports = function(grunt) {
     // Project settings
     config: appConfig,
 
+    // Watches files for changes and runs tasks based on the changed files
+    watch: {
+      bower: {
+        files: ['bower.json'],
+        tasks: ['wiredep']
+      },
+      js: {
+        files: ['<%= config.app %>/scripts/{,*/}*.js'],
+        options: {
+          livereload: '<%= connect.options.livereload %>'
+        }
+      },
+      sass: {
+        files: ['<%= config.app %>/sass/{,*/}*.scss'],
+        tasks: ['sass'],
+        options: {
+          livereload: true
+        },
+      },
+      includes: {
+        files: ['<%= config.app %>/{,*/}*.html'],
+        tasks: ['includes:files']
+      },
+      gruntfile: {
+        files: ['Gruntfile.js']
+      },
+      livereload: {
+        options: {
+          livereload: '<%= connect.options.livereload %>'
+        },
+        files: [
+          '<%= config.app %>/{,*/}*.html',
+          '.tmp/styles/{,*/}*.css',
+          '<%= config.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+        ]
+      }
+    },
+
+    // The actual grunt server settings
+    connect: {
+      options: {
+        port: 9000,
+        hostname: '0.0.0.0',
+        livereload: 35729
+      },
+      livereload: {
+        options: {
+          open: true,
+          middleware: function (connect) {
+            return [
+              connect.static('.tmp'),
+              connect().use(
+                '/bower_components',
+                connect.static('./bower_components')
+              ),
+              connect.static(appConfig.app)
+            ];
+          }
+        }
+      },
+      dist: {
+        options: {
+          open: true,
+          base: '<%= config.dist %>'
+        }
+      }
+    },
+
     clean: {
       dist: {
         files: [{
@@ -118,7 +186,17 @@ module.exports = function(grunt) {
 
     // Build the site using grunt-includes
     includes: {
-      build: {
+      files: {
+        cwd: '<%= config.app %>',
+        src: ['*.html'],
+        dest: '.tmp',
+        flatten: true,
+        options: {
+          silent: true,
+          includePath: '<%= config.app %>/partials'
+        }
+      },
+      dist: {
         cwd: '<%= config.app %>',
         src: ['*.html'],
         dest: '<%= config.dist %>',
@@ -126,19 +204,28 @@ module.exports = function(grunt) {
           flatten: true,
           includePath: '<%= config.app %>/partials'
         }
-      }
+      },
     }
 
   });
 
+  grunt.registerTask('serve', [
+    'clean:server',
+    //'wiredep',
+    'sass',
+    'includes:files',
+    'connect:livereload',
+    'watch'
+  ]);
+
   // Default task
-  grunt.registerTask('default', [
+  grunt.registerTask('build', [
     'clean:dist',
     'wiredep',
     'sass',
     'useminPrepare',
     'copy:dist',
-    'includes',
+    'includes:dist',
     'cssmin',
     'concat',
     'uglify',

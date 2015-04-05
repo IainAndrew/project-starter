@@ -1,1 +1,1 @@
-alert('hello world');
+console.log('component.js loaded');
