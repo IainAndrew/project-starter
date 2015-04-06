@@ -99,8 +99,9 @@ module.exports = function(grunt) {
     // Automatically inject Bower components into the app
     wiredep: {
       app: {
-        src: ['<%= config.app %>/index.html'],
-        devDependencies: true
+        src: ['<%= config.app %>/partials/scripts.html'],
+        devDependencies: true,
+        exclude: [ '/bower_components/modernizr/modernizr.js' ]
       }
     },
 
@@ -108,7 +109,7 @@ module.exports = function(grunt) {
     // concat, minify and revision files. Creates configurations in memory so
     // additional tasks can operate on them
     useminPrepare: {
-      html: '<%= config.app %>/index.html',
+      html: ['<%= config.app %>/index.html', '<%= config.app %>/partials/scripts.html'],
       options: {
         dest: '<%= config.dist %>',
         flow: {
