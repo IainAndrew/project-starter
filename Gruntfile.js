@@ -184,6 +184,18 @@ module.exports = function(grunt) {
       }
     },
 
+    // Image optimisation
+    imagemin: {
+      dist: {
+        files: [{
+          expand: true,
+          cwd: '<%= config.app %>/images',
+          src: '{,*/}*.{png,jpg,jpeg,gif}',
+          dest: '<%= config.dist %>/images'
+        }]
+      }
+    },
+
     // Build the site using grunt-includes
     includes: {
       files: {
@@ -211,7 +223,6 @@ module.exports = function(grunt) {
 
   grunt.registerTask('serve', [
     'clean:server',
-    //'wiredep',
     'sass',
     'includes:files',
     'connect:livereload',
@@ -225,6 +236,7 @@ module.exports = function(grunt) {
     'sass',
     'useminPrepare',
     'copy:dist',
+    'imagemin',
     'includes:dist',
     'cssmin',
     'concat',
